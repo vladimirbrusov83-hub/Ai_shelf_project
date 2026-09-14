@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Shelf — open resources for AI in libraries and education</title>
+<meta name="description" content="AI Shelf is a small collection of open resources on artificial intelligence for academic libraries, music librarianship, professional development, and building your own tools.">
+<meta property="og:title" content="AI Shelf">
+<meta property="og:description" content="A small collection of open resources on AI for academic libraries, music librarianship, and educators who want to build.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='14' fill='%231a120b'/><rect x='18' y='20' width='14' height='60' rx='2' fill='%236e2230'/><rect x='36' y='20' width='14' height='60' rx='2' fill='%231f3a2e'/><rect x='54' y='20' width='14' height='60' rx='2' fill='%23c9a24a'/><rect x='72' y='20' width='10' height='60' rx='2' fill='%231e2f4a'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c0906;
+    --ground:#16100a;
+    --wood-face:#5b3d24;
+    --wood-light:#7d5433;
+    --wood-dark:#2b1c10;
+    --wood-edge:#3d281700;
+    --gold:#c9a24a;
+    --gold-soft:#e0c184;
+    --cream:#ece0c8;
+    --muted:#a8977c;
+    --oxblood:#6e2230;
+    --forest:#1f3a2e;
+    --navy:#1e2f4a;
+    --tan:#8a5a2b;
+    --shadow:rgba(0,0,0,.6);
+    --serif:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --sans:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--cream);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.65;
+    overflow-x:hidden;
+  }
+
+  /* warm room light */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background:
+      radial-gradient(90% 55% at 50% 8%, rgba(214,164,86,.16), transparent 62%),
+      radial-gradient(70% 50% at 12% 78%, rgba(150,96,44,.10), transparent 65%),
+      radial-gradient(120% 90% at 50% 50%, transparent 45%, rgba(0,0,0,.72) 100%);
+  }
+  .page{position:relative;z-index:1}
+
+  a{color:inherit}
+  .wrap{width:min(1120px,92vw);margin:0 auto}
+
+  /* ---------- header ---------- */
+  header{padding:clamp(48px,9vw,96px) 0 clamp(24px,4vw,40px);text-align:center}
+  .kicker{
+    font-family:var(--sans);
+    font-size:11px;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin:0 0 18px;
+  }
+  h1{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:clamp(56px,13vw,132px);
+    line-height:.92;
+    letter-spacing:-.02em;
+    margin:0;
+    color:#f4ead4;
+    text-shadow:0 2px 30px rgba(201,162,74,.28), 0 1px 0 rgba(0,0,0,.6);
+  }
+  h1 .amp{
+    display:block;
+    font-style:italic;
+    font-weight:400;
+    font-size:.3em;
+    letter-spacing:.06em;
+    color:var(--gold-soft);
+    margin-top:.5em;
+  }
+  .lede{
+    font-family:var(--serif);
+    font-size:clamp(18px,2.4vw,23px);
+    line-height:1.55;
+    color:#d7c8ab;
+    max-width:39ch;
+    margin:26px auto 0;
+  }
+  .rule{
+    width:120px;height:1px;margin:34px auto 0;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+
+  /* ---------- bookcase ---------- */
+  .case{
+    margin:clamp(36px,6vw,64px) auto 0;
+    width:min(960px,94vw);
+    border-radius:6px 6px 3px 3px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.05), transparent 12%),
+      linear-gradient(90deg, var(--wood-dark) 0 10px, transparent 10px calc(100% - 10px), var(--wood-dark) calc(100% - 10px)),
+      radial-gradient(120% 80% at 50% 0%, #241708, #150d06 70%);
+    box-shadow:
+      0 40px 90px -30px #000,
+      inset 0 0 0 1px rgba(201,162,74,.10),
+      inset 0 0 90px rgba(0,0,0,.9);
+    padding:14px 14px 0;
+    overflow:hidden;
+  }
+
+  .shelf{position:relative;padding:0 clamp(8px,2vw,20px)}
+  .shelf-books{
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:3px;
+    min-height:96px;
+  }
+  /* if the filler books never render (JS off), don't leave tall empty voids */
+  .shelf-books:empty{min-height:32px}
+  /* the plank */
+  .plank{
+    height:16px;
+    margin:0 0 clamp(18px,3vw,30px);
+    border-radius:2px;
+    background:
+      linear-gradient(180deg, var(--wood-light) 0 3px, var(--wood-face) 3px 10px, var(--wood-dark) 10px);
+    box-shadow:0 12px 22px -8px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,220,170,.22);
+    position:relative;
+  }
+  .plank::after{
+    content:"";position:absolute;left:0;right:0;top:100%;height:26px;
+    background:linear-gradient(180deg, rgba(0,0,0,.55), transparent);
+  }
+  .shelf:last-child .plank{margin-bottom:0}
+
+  /* decorative spines */
+  .dec{
+    flex:0 0 auto;
+    border-radius:2px 2px 1px 1px;
+    background:
+      linear-gradient(90deg, rgba(0,0,0,.45) 0 2px, transparent 2px calc(100% - 3px), rgba(0,0,0,.5) calc(100% - 3px));
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.35), 0 6px 10px -6px #000;
+    opacity:.62;
+    position:relative;
+  }
+  .dec::before,.dec::after{
+    content:"";position:absolute;left:14%;right:14%;height:1px;
+    background:rgba(201,162,74,.5);
+  }
+  .dec::before{top:16%} .dec::after{bottom:20%}
+
+  /* objects */
+  .obj{flex:0 0 auto;display:block;opacity:.8;filter:drop-shadow(0 6px 10px rgba(0,0,0,.7))}
+
+  /* groups of filler books either side of the four */
+  .flank{
+    flex:0 1 auto;
+    display:flex;
+    align-items:flex-end;
+    gap:3px;
+    padding:0 clamp(6px,1.4vw,16px);
+    overflow:hidden;
+  }
+
+  /* ---------- the four real spines ---------- */
+  .main-shelf .shelf-books{min-height:clamp(250px,34vw,340px);gap:clamp(4px,.8vw,9px)}
+
+  .spine{
+    position:relative;
+    flex:0 0 auto;
+    width:clamp(76px,8.4vw,104px);
+    height:clamp(250px,34vw,340px);
+    border-radius:3px 3px 2px 2px;
+    text-decoration:none;
+    color:var(--cream);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:22px 6px;
+    transform-origin:bottom center;
+    transition:transform .42s cubic-bezier(.2,.9,.3,1.1), box-shadow .42s ease, filter .42s ease;
+    box-shadow:
+      inset 0 0 0 1px rgba(0,0,0,.5),
+      inset 6px 0 12px -6px rgba(255,255,255,.14),
+      inset -8px 0 16px -6px rgba(0,0,0,.7),
+      0 10px 18px -10px #000;
+    background-image:
+      linear-gradient(90deg, rgba(255,255,255,.10) 0 3px, transparent 3px calc(100% - 5px), rgba(0,0,0,.45) calc(100% - 5px)),
+      linear-gradient(180deg, rgba(255,255,255,.06), transparent 22%, rgba(0,0,0,.28));
+    background-color:var(--c);
+  }
+  /* gold bands */
+  .spine::before,.spine::after{
+    content:"";position:absolute;left:10%;right:10%;height:2px;
+    background:linear-gradient(90deg, transparent, var(--gold-soft) 20%, var(--gold) 80%, transparent);
+    opacity:.85;
+  }
+  .spine::before{top:26px} .spine::after{bottom:26px}
+
+  .spine-text{
+    writing-mode:vertical-rl;
+    text-orientation:mixed;
+    transform:rotate(180deg);
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:clamp(15px,1.55vw,19px);
+    line-height:1.15;
+    letter-spacing:.045em;
+    text-align:center;
+    max-height:100%;
+    text-shadow:0 1px 2px rgba(0,0,0,.7);
+  }
+
+  .spine:hover,.spine:focus-visible{
+    transform:translateY(-16px) rotate(-2.2deg);
+    filter:brightness(1.22);
+    box-shadow:
+      inset 0 0 0 1px rgba(0,0,0,.5),
+      inset 6px 0 12px -6px rgba(255,255,255,.2),
+      0 26px 40px -18px #000,
+      0 0 42px -6px rgba(224,193,132,.45);
+    outline:none;
+    z-index:3;
+  }
+  .spine:focus-visible{outline:2px solid var(--gold-soft);outline-offset:4px}
+
+  .spine.soon{opacity:.72;cursor:default}
+  .spine.soon:hover{transform:none;filter:none}
+  .badge-soon{
+    position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+    font-family:var(--sans);font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;
+    background:#241708;color:var(--gold);
+    border:1px solid rgba(201,162,74,.45);
+    border-radius:99px;padding:3px 8px;white-space:nowrap;
+  }
+
+  .case-caption{
+    text-align:center;
+    font-family:var(--serif);
+    font-style:italic;
+    color:var(--muted);
+    font-size:15px;
+    margin:22px auto 0;
+  }
+
+  /* ---------- detail cards ---------- */
+  .collection{padding:clamp(64px,9vw,110px) 0 0}
+  .sec-head{text-align:center;margin-bottom:clamp(30px,4vw,48px)}
+  .sec-head h2{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(30px,4.6vw,46px);margin:0;color:#f0e5cd;letter-spacing:-.01em;
+  }
+  .sec-head p{color:var(--muted);margin:12px auto 0;max-width:52ch;font-size:15.5px}
+
+  .cards{display:grid;gap:clamp(16px,2.2vw,22px);grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+  .card{
+    position:relative;
+    display:flex;flex-direction:column;
+    padding:28px 26px 26px;
+    border-radius:4px;
+    text-decoration:none;
+    background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+    border:1px solid rgba(201,162,74,.16);
+    box-shadow:0 18px 40px -26px #000;
+    transition:border-color .25s ease, transform .25s ease, background .25s ease;
+    overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c);
+  }
+  .card:hover{border-color:rgba(201,162,74,.42);transform:translateY(-3px);background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02))}
+  .card:focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px}
+  .card.soon{cursor:default}
+  .card.soon:hover{transform:none}
+
+  .card-eyebrow{
+    font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;
+  }
+  .card h3{
+    font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.18;margin:0 0 10px;color:#f2e8d2;
+  }
+  .card p{margin:0 0 18px;color:#c3b39a;font-size:15px;line-height:1.6}
+  .tags{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 20px}
+  .tag{
+    font-size:11px;letter-spacing:.06em;color:var(--muted);
+    border:1px solid rgba(201,162,74,.22);border-radius:99px;padding:3px 10px;
+  }
+  .go{
+    margin-top:auto;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--gold-soft);display:inline-flex;align-items:center;gap:8px;
+  }
+  .go span{transition:transform .25s ease;display:inline-block}
+  .card:hover .go span{transform:translateX(5px)}
+  .card.soon .go{color:var(--muted)}
+
+  /* ---------- about ---------- */
+  .about{
+    padding:clamp(64px,9vw,110px) 0 clamp(48px,7vw,80px);
+  }
+  .about-inner{
+    max-width:66ch;margin:0 auto;text-align:center;
+    font-family:var(--serif);font-size:clamp(18px,2.2vw,22px);line-height:1.68;color:#d3c4a7;
+  }
+  .about-inner em{color:var(--gold-soft)}
+
+  footer{
+    border-top:1px solid rgba(201,162,74,.14);
+    padding:32px 0 48px;
+    text-align:center;color:var(--muted);font-size:13px;
+  }
+  footer .dot{color:var(--gold);margin:0 10px}
+
+  /* ---------- mobile ---------- */
+  @media (max-width:760px){
+    .case{padding:10px 0 0;width:100vw;border-radius:0}
+    .case-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 14px 4px}
+    .dec.hide-sm,.obj.hide-sm{display:none}
+    .shelf{padding:0}
+    .shelf-books{min-height:70px}
+    .spine{width:74px;height:250px;padding:20px 4px}
+    .main-shelf .shelf-books{min-height:250px;gap:3px}
+    .spine-text{font-size:14px;letter-spacing:.03em}
+    .spine::before{top:20px} .spine::after{bottom:20px}
+    h1 .amp{font-size:.34em}
+  }
+  @media (max-width:380px){
+    .card{padding:24px 20px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important}
+    .spine:hover,.spine:focus-visible{transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="wrap">
+      <p class="kicker">Open resources · Free to use</p>
+      <h1>AI Shelf<span class="amp">four guides, one shelf</span></h1>
+      <p class="lede">A small, deliberate collection on artificial intelligence for academic libraries, music librarianship, and the people who want to build their own tools.</p>
+      <div class="rule" aria-hidden="true"></div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= BOOKCASE ================= -->
+    <section aria-labelledby="shelf-h">
+      <h2 id="shelf-h" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap">The shelf</h2>
+
+      <div class="case">
+        <div class="case-scroll">
+          <div class="case-inner">
+
+            <!-- decorative top shelf -->
+            <div class="shelf" aria-hidden="true">
+              <div class="shelf-books" data-dec="top"></div>
+              <div class="plank"></div>
+            </div>
+
+            <!-- THE FOUR -->
+            <div class="shelf main-shelf">
+              <div class="shelf-books">
+                <div class="flank" data-dec="flank-left" aria-hidden="true"></div>
+
+                <a class="spine" style="--c:#6e2230" href="https://ai-in-academic-libraries.vercel.app" target="_blank" rel="noopener">
+                  <span class="spine-text">AI for Academic Libraries</span>
+                </a>
+
+                <a class="spine" style="--c:#1f3a2e" href="https://ai-in-music-librarys.vercel.app" target="_blank" rel="noopener">
+                  <span class="spine-text">AI for Music Libraries</span>
+                </a>
+
+                <a class="spine" style="--c:#1e2f4a" href="https://ai-in-academic-libraries.vercel.app/professional-development.html" target="_blank" rel="noopener">
+                  <span class="spine-text">Professional Development</span>
+                </a>
+
+                <span class="spine soon" style="--c:#7a5320" aria-hidden="true">
+                  <span class="badge-soon">Coming soon</span>
+                  <span class="spine-text">Agentic Coding for Educators</span>
+                </span>
+
+                <div class="flank" data-dec="flank-right" aria-hidden="true"></div>
+              </div>
+              <div class="plank"></div>
+            </div>
+
+            <!-- decorative bottom shelf -->
+            <div class="shelf" aria-hidden="true">
+              <div class="shelf-books" data-dec="bottom"></div>
+              <div class="plank"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <p class="case-caption">Pull a volume off the shelf.</p>
+    </section>
+
+    <!-- ================= CARDS ================= -->
+    <section class="collection wrap" aria-labelledby="coll-h">
+      <div class="sec-head">
+        <h2 id="coll-h">What&rsquo;s on the shelf</h2>
+        <p>Four independent, freely available projects. No accounts, no paywalls, no tracking &mdash; open a link and start reading.</p>
+      </div>
+
+      <div class="cards">
+
+        <a class="card" style="--c:#6e2230" href="https://ai-in-academic-libraries.vercel.app" target="_blank" rel="noopener">
+          <div class="card-eyebrow">Volume I &middot; Curriculum</div>
+          <h3>AI for Academic Libraries</h3>
+          <p>An eighteen-module curriculum for academic library workers, mapped to the ACRL AI Competencies and aligned with ALA guidance. Three levels, from conceptual foundations through applied workflows to automation and agentic AI.</p>
+          <div class="tags"><span class="tag">18 modules</span><span class="tag">ACRL-mapped</span><span class="tag">3 levels</span></div>
+          <div class="go">Open the curriculum <span aria-hidden="true">&rarr;</span></div>
+        </a>
+
+        <a class="card" style="--c:#1f3a2e" href="https://ai-in-music-librarys.vercel.app" target="_blank" rel="noopener">
+          <div class="card-eyebrow">Volume II &middot; Curriculum</div>
+          <h3>AI for Music Libraries</h3>
+          <p>Eleven modules written for music librarians and the particular problems of music collections &mdash; scores, recordings, uniform titles, rights, and the metadata work that never quite fits a general-purpose tool.</p>
+          <div class="tags"><span class="tag">11 modules</span><span class="tag">Music librarianship</span><span class="tag">Metadata</span></div>
+          <div class="go">Open the curriculum <span aria-hidden="true">&rarr;</span></div>
+        </a>
+
+        <a class="card" style="--c:#1e2f4a" href="https://ai-in-academic-libraries.vercel.app/professional-development.html" target="_blank" rel="noopener">
+          <div class="card-eyebrow">Volume III &middot; Directory</div>
+          <h3>Professional Development</h3>
+          <p>A working directory of conferences, institutes, and calls for proposals on AI in libraries &mdash; sortable, with upcoming and past events separated automatically so you always see what is still open.</p>
+          <div class="tags"><span class="tag">Conferences</span><span class="tag">CFPs</span><span class="tag">Updated regularly</span></div>
+          <div class="go">Browse the directory <span aria-hidden="true">&rarr;</span></div>
+        </a>
+
+        <div class="card soon" style="--c:#7a5320">
+          <div class="card-eyebrow">Volume IV &middot; Course</div>
+          <h3>Agentic Coding for Educators</h3>
+          <p>Fourteen modules teaching higher-education faculty and academic librarians with no programming background to design, build, and ship real web tools using agentic coding &mdash; from a first idea to a live site.</p>
+          <div class="tags"><span class="tag">14 modules</span><span class="tag">No code required</span><span class="tag">Build &amp; ship</span></div>
+          <div class="go">Coming soon</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= ABOUT ================= -->
+    <section class="about wrap">
+      <div class="about-inner">
+        <p>Every volume here started with the same question: <em>what does this technology actually change about the work we already do?</em> Not the marketing answer &mdash; the practical one, written by people doing the work, for people doing the work.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      AI Shelf <span class="dot">&middot;</span> Open educational resources <span class="dot">&middot;</span> <span id="yr">2026</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* decorative spines — colors sampled from the reference shelves */
+  const palette = ['#5a2a2a','#3c2b1a','#2b3a2c','#22343f','#4a2a22','#3a2a3d','#6b4a22','#243a34','#4f2430','#2e2a1c','#1f2b3a','#5c3a1c'];
+  /* fill a shelf run until it spans targetW px, so shelves read as full rather than sparse */
+  function fill(node, targetW, minH, maxH){
+    let html = '', used = 0;
+    while (used < targetW){
+      const w = 8 + Math.round(Math.random() * 14);
+      const h = minH + Math.round(Math.random() * (maxH - minH));
+      const c = palette[Math.floor(Math.random() * palette.length)];
+      const lean = Math.random() < 0.06 ? 'transform:rotate(6deg);transform-origin:bottom left;' : '';
+      html += `<div class="dec" style="width:${w}px;height:${h}px;background-color:${c};${lean}"></div>`;
+      used += w + 3;
+    }
+    node.innerHTML = html;
+  }
+
+  const bust = `<svg class="obj hide-sm" width="56" height="86" viewBox="0 0 56 86" fill="none">
+    <ellipse cx="28" cy="23" rx="14" ry="17" fill="#d6cdb9"/>
+    <ellipse cx="26" cy="24" rx="10" ry="13" fill="#eee7d6"/>
+    <path d="M17 12c4-6 18-6 22 0 2 4 1 8-1 9-1-5-4-7-10-7s-9 2-10 7c-2-1-3-5-1-9z" fill="#c8bfa9"/>
+    <rect x="24" y="36" width="8" height="10" fill="#ded5c1"/>
+    <path d="M11 56c1-8 8-12 17-12s16 4 17 12l2 12H9l2-12z" fill="#e6dfcd"/>
+    <path d="M28 46c-5 0-9 3-11 8h22c-2-5-6-8-11-8z" fill="#cdc4ae"/>
+    <rect x="15" y="68" width="26" height="6" rx="1" fill="#cbc2ac"/>
+    <rect x="9" y="74" width="38" height="10" rx="2" fill="#d4cbb5"/>
+  </svg>`;
+
+  const globe = `<svg class="obj hide-sm" width="52" height="66" viewBox="0 0 52 66" fill="none">
+    <circle cx="26" cy="26" r="21" fill="#8a6a34"/>
+    <circle cx="26" cy="26" r="21" fill="none" stroke="#c9a24a" stroke-width="1.2"/>
+    <ellipse cx="26" cy="26" rx="9" ry="21" fill="none" stroke="#c9a24a" stroke-width="1" opacity=".7"/>
+    <path d="M5 26h42M8 16h36M8 36h36" stroke="#c9a24a" stroke-width="1" opacity=".55"/>
+    <path d="M26 48v10M16 62h20" stroke="#7d5433" stroke-width="4" stroke-linecap="round"/>
+  </svg>`;
+
+  const candles = `<svg class="obj hide-sm" width="54" height="80" viewBox="0 0 54 80" fill="none">
+    <rect x="12" y="26" width="6" height="40" rx="2" fill="#efe6d2"/>
+    <rect x="24" y="18" width="6" height="48" rx="2" fill="#efe6d2"/>
+    <rect x="36" y="30" width="6" height="36" rx="2" fill="#efe6d2"/>
+    <ellipse cx="15" cy="22" rx="3" ry="5" fill="#f5c56a"/>
+    <ellipse cx="27" cy="14" rx="3" ry="5" fill="#f5c56a"/>
+    <ellipse cx="39" cy="26" rx="3" ry="5" fill="#f5c56a"/>
+    <path d="M6 66h42l-4 8H10l-4-8z" fill="#8a6a34"/>
+  </svg>`;
+
+  const shelfTop = document.querySelector('[data-dec="top"]');
+  const shelfBottom = document.querySelector('[data-dec="bottom"]');
+  const flankL = document.querySelector('[data-dec="flank-left"]');
+  const flankR = document.querySelector('[data-dec="flank-right"]');
+
+  function dressShelves(){
+    const narrow = window.matchMedia('(max-width:760px)').matches;
+    const runW = shelfTop.clientWidth;
+    const spineRun = Array.from(document.querySelectorAll('.main-shelf .spine'))
+      .reduce((sum, el) => sum + el.offsetWidth + 9, 0);
+
+    fill(shelfTop, runW - (narrow ? 0 : 104), narrow ? 52 : 66, narrow ? 76 : 96);
+    if (!narrow){
+      shelfTop.insertAdjacentHTML('afterbegin', candles);
+      shelfTop.insertAdjacentHTML('beforeend', bust);
+    }
+
+    fill(shelfBottom, runW - (narrow ? 0 : 58), narrow ? 58 : 74, narrow ? 84 : 108);
+    if (!narrow) shelfBottom.insertAdjacentHTML('beforeend', globe);
+
+    if (!narrow){
+      const side = Math.max(0, (runW - spineRun) / 2 - 18);
+      fill(flankL, side, 190, 256);
+      fill(flankR, side, 186, 248);
+    } else {
+      flankL.innerHTML = flankR.innerHTML = '';
+    }
+  }
+
+  dressShelves();
+
+  let redress;
+  window.addEventListener('resize', () => {
+    clearTimeout(redress);
+    redress = setTimeout(dressShelves, 220);
+  });
+</script>
+</body>
+</html>
