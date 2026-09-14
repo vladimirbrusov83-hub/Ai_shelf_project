@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI Shelf — open resources for AI in libraries and education</title>
-<meta name="description" content="AI Shelf is a small collection of open resources on artificial intelligence for academic libraries, music librarianship, professional development, and building your own tools.">
+<meta name="description" content="AI Shelf is a small collection of open resources on artificial intelligence for academic libraries, music librarianship, professional development, research practice, and building your own tools.">
 <meta property="og:title" content="AI Shelf">
 <meta property="og:description" content="A small collection of open resources on AI for academic libraries, music librarianship, and educators who want to build.">
 <meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='14' fill='%231a120b'/><rect x='18' y='20' width='14' height='60' rx='2' fill='%236e2230'/><rect x='36' y='20' width='14' height='60' rx='2' fill='%231f3a2e'/><rect x='54' y='20' width='14' height='60' rx='2' fill='%23c9a24a'/><rect x='72' y='20' width='10' height='60' rx='2' fill='%231e2f4a'/></svg>">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20rx='14'%20fill='%231a120b'/%3E%3Crect%20x='14'%20y='20'%20width='13'%20height='60'%20rx='2'%20fill='%230f6e56'/%3E%3Crect%20x='30'%20y='20'%20width='13'%20height='60'%20rx='2'%20fill='%2354265b'/%3E%3Crect%20x='46'%20y='20'%20width='13'%20height='60'%20rx='2'%20fill='%23854f0b'/%3E%3Crect%20x='62'%20y='20'%20width='13'%20height='60'%20rx='2'%20fill='%23185fa5'/%3E%3Crect%20x='78'%20y='20'%20width='10'%20height='60'%20rx='2'%20fill='%23223247'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -24,10 +24,13 @@
     --gold-soft:#e0c184;
     --cream:#ece0c8;
     --muted:#a8977c;
-    --oxblood:#6e2230;
-    --forest:#1f3a2e;
-    --navy:#1e2f4a;
-    --tan:#8a5a2b;
+    /* spine colors sampled from each project's own site */
+    --c-acad:#0f6e56;    /* AI for Academic Libraries  */
+    --c-music:#54265b;   /* AI for Music Libraries     */
+    --c-pd:#854f0b;      /* Professional Development   */
+    --c-agentic:#185fa5; /* Agentic Coding             */
+    --c-research:#223247;/* Research Lifecycle         */
+    --cyan:#3fd0c6;      /* Research Lifecycle accent  */
     --shadow:rgba(0,0,0,.6);
     --serif:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
     --sans:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -206,7 +209,7 @@
   /* gold bands */
   .spine::before,.spine::after{
     content:"";position:absolute;left:10%;right:10%;height:2px;
-    background:linear-gradient(90deg, transparent, var(--gold-soft) 20%, var(--gold) 80%, transparent);
+    background:linear-gradient(90deg, transparent, var(--band-soft,var(--gold-soft)) 20%, var(--band,var(--gold)) 80%, transparent);
     opacity:.85;
   }
   .spine::before{top:26px} .spine::after{bottom:26px}
@@ -331,9 +334,9 @@
     .dec.hide-sm,.obj.hide-sm{display:none}
     .shelf{padding:0}
     .shelf-books{min-height:70px}
-    .spine{width:74px;height:250px;padding:20px 4px}
-    .main-shelf .shelf-books{min-height:250px;gap:3px}
-    .spine-text{font-size:14px;letter-spacing:.03em}
+    .spine{width:64px;height:248px;padding:18px 3px}
+    .main-shelf .shelf-books{min-height:248px;gap:2px}
+    .spine-text{font-size:12.5px;letter-spacing:.02em}
     .spine::before{top:20px} .spine::after{bottom:20px}
     h1 .amp{font-size:.34em}
   }
@@ -353,8 +356,8 @@
   <header>
     <div class="wrap">
       <p class="kicker">Open resources · Free to use</p>
-      <h1>AI Shelf<span class="amp">four guides, one shelf</span></h1>
-      <p class="lede">A small, deliberate collection on artificial intelligence for academic libraries, music librarianship, and the people who want to build their own tools.</p>
+      <h1>AI Shelf<span class="amp">five guides, one shelf</span></h1>
+      <p class="lede">A small, deliberate collection on artificial intelligence for academic libraries, music librarianship, research practice, and the people who want to build their own tools.</p>
       <div class="rule" aria-hidden="true"></div>
     </div>
   </header>
@@ -379,22 +382,25 @@
               <div class="shelf-books">
                 <div class="flank" data-dec="flank-left" aria-hidden="true"></div>
 
-                <a class="spine" style="--c:#6e2230" href="https://ai-in-academic-libraries.vercel.app" target="_blank" rel="noopener">
+                <a class="spine" style="--c:var(--c-acad)" href="https://ai-in-academic-libraries.vercel.app" target="_blank" rel="noopener">
                   <span class="spine-text">AI for Academic Libraries</span>
                 </a>
 
-                <a class="spine" style="--c:#1f3a2e" href="https://ai-in-music-librarys.vercel.app" target="_blank" rel="noopener">
+                <a class="spine" style="--c:var(--c-music)" href="https://ai-in-music-librarys.vercel.app" target="_blank" rel="noopener">
                   <span class="spine-text">AI for Music Libraries</span>
                 </a>
 
-                <a class="spine" style="--c:#1e2f4a" href="https://ai-in-academic-libraries.vercel.app/professional-development.html" target="_blank" rel="noopener">
+                <a class="spine" style="--c:var(--c-pd)" href="https://ai-in-academic-libraries.vercel.app/professional-development.html" target="_blank" rel="noopener">
                   <span class="spine-text">Professional Development</span>
                 </a>
 
-                <span class="spine soon" style="--c:#7a5320" aria-hidden="true">
-                  <span class="badge-soon">Coming soon</span>
+                <a class="spine" style="--c:var(--c-agentic)" href="https://agentic-coding-education.vercel.app" target="_blank" rel="noopener">
                   <span class="spine-text">Agentic Coding for Educators</span>
-                </span>
+                </a>
+
+                <a class="spine" style="--c:var(--c-research);--band:var(--cyan);--band-soft:#7ae7de" href="https://vladimirbrusov83-hub.github.io/research_lifecycle/" target="_blank" rel="noopener">
+                  <span class="spine-text">The Research Lifecycle</span>
+                </a>
 
                 <div class="flank" data-dec="flank-right" aria-hidden="true"></div>
               </div>
@@ -418,12 +424,12 @@
     <section class="collection wrap" aria-labelledby="coll-h">
       <div class="sec-head">
         <h2 id="coll-h">What&rsquo;s on the shelf</h2>
-        <p>Four independent, freely available projects. No accounts, no paywalls, no tracking &mdash; open a link and start reading.</p>
+        <p>Five independent, freely available projects. No accounts, no paywalls, no tracking &mdash; open a link and start reading.</p>
       </div>
 
       <div class="cards">
 
-        <a class="card" style="--c:#6e2230" href="https://ai-in-academic-libraries.vercel.app" target="_blank" rel="noopener">
+        <a class="card" style="--c:var(--c-acad)" href="https://ai-in-academic-libraries.vercel.app" target="_blank" rel="noopener">
           <div class="card-eyebrow">Volume I &middot; Curriculum</div>
           <h3>AI for Academic Libraries</h3>
           <p>An eighteen-module curriculum for academic library workers, mapped to the ACRL AI Competencies and aligned with ALA guidance. Three levels, from conceptual foundations through applied workflows to automation and agentic AI.</p>
@@ -431,7 +437,7 @@
           <div class="go">Open the curriculum <span aria-hidden="true">&rarr;</span></div>
         </a>
 
-        <a class="card" style="--c:#1f3a2e" href="https://ai-in-music-librarys.vercel.app" target="_blank" rel="noopener">
+        <a class="card" style="--c:var(--c-music)" href="https://ai-in-music-librarys.vercel.app" target="_blank" rel="noopener">
           <div class="card-eyebrow">Volume II &middot; Curriculum</div>
           <h3>AI for Music Libraries</h3>
           <p>Eleven modules written for music librarians and the particular problems of music collections &mdash; scores, recordings, uniform titles, rights, and the metadata work that never quite fits a general-purpose tool.</p>
@@ -439,7 +445,7 @@
           <div class="go">Open the curriculum <span aria-hidden="true">&rarr;</span></div>
         </a>
 
-        <a class="card" style="--c:#1e2f4a" href="https://ai-in-academic-libraries.vercel.app/professional-development.html" target="_blank" rel="noopener">
+        <a class="card" style="--c:var(--c-pd)" href="https://ai-in-academic-libraries.vercel.app/professional-development.html" target="_blank" rel="noopener">
           <div class="card-eyebrow">Volume III &middot; Directory</div>
           <h3>Professional Development</h3>
           <p>A working directory of conferences, institutes, and calls for proposals on AI in libraries &mdash; sortable, with upcoming and past events separated automatically so you always see what is still open.</p>
@@ -447,13 +453,21 @@
           <div class="go">Browse the directory <span aria-hidden="true">&rarr;</span></div>
         </a>
 
-        <div class="card soon" style="--c:#7a5320">
+        <a class="card" style="--c:var(--c-agentic)" href="https://agentic-coding-education.vercel.app" target="_blank" rel="noopener">
           <div class="card-eyebrow">Volume IV &middot; Course</div>
           <h3>Agentic Coding for Educators</h3>
           <p>Fourteen modules teaching higher-education faculty and academic librarians with no programming background to design, build, and ship real web tools using agentic coding &mdash; from a first idea to a live site.</p>
           <div class="tags"><span class="tag">14 modules</span><span class="tag">No code required</span><span class="tag">Build &amp; ship</span></div>
-          <div class="go">Coming soon</div>
-        </div>
+          <div class="go">Open the course <span aria-hidden="true">&rarr;</span></div>
+        </a>
+
+        <a class="card" style="--c:var(--c-research)" href="https://vladimirbrusov83-hub.github.io/research_lifecycle/" target="_blank" rel="noopener">
+          <div class="card-eyebrow">Volume V &middot; Map</div>
+          <h3>The Research Lifecycle</h3>
+          <p>An interactive map of research from first question to long-term stewardship &mdash; ten phases, each read three ways at once: what the researcher does, where AI genuinely helps, and where the library already has a service waiting.</p>
+          <div class="tags"><span class="tag">10 phases</span><span class="tag">Interactive</span><span class="tag">Three lenses</span></div>
+          <div class="go">Open the map <span aria-hidden="true">&rarr;</span></div>
+        </a>
 
       </div>
     </section>
