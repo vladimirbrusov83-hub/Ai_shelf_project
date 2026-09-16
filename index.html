@@ -83,17 +83,18 @@
   }
   @keyframes fade{from{opacity:0}to{opacity:1}}
 
+  /* fill-mode is 'backwards' on purpose: once each entrance finishes, normal styles
+     (including hover transforms) take over again */
   .js .hero-in{
-    opacity:0;
-    animation:rise .9s var(--ease-out) both;
+    animation:rise .9s var(--ease-out) backwards;
     animation-delay:calc(var(--i,0) * 110ms);
   }
-  .js .case{animation:fade 1s var(--ease-soft) both .25s}
+  .js .case{animation:fade 1s var(--ease-soft) backwards .25s}
   .js .spine{
-    animation:settle var(--t-book) var(--ease-out) both;
+    animation:settle var(--t-book) var(--ease-out) backwards;
     animation-delay:calc(.55s + var(--i,0) * 80ms);
   }
-  .js .case-caption{animation:fade .8s var(--ease-soft) both 1.2s}
+  .js .case-caption{animation:fade .8s var(--ease-soft) backwards 1.2s}
 
   /* ---------- header ---------- */
   header{padding:clamp(48px,9vw,96px) 0 clamp(24px,4vw,40px);text-align:center}
