@@ -207,7 +207,7 @@
   }
 
   /* ---------- the five real spines ---------- */
-  .main-shelf .shelf-books{min-height:clamp(250px,34vw,340px);gap:clamp(4px,.8vw,9px)}
+  .main-shelf .shelf-books{min-height:clamp(250px,34vw,340px);gap:clamp(4px,.8vw,9px);perspective:1100px;perspective-origin:50% 40%}
 
   .spine{
     position:relative;
@@ -221,7 +221,9 @@
     align-items:center;
     justify-content:center;
     padding:22px 6px;
-    transform-origin:bottom center;
+    transform-origin:50% 100%;
+    transform-style:preserve-3d;
+    backface-visibility:hidden;
     will-change:transform;
     transition:transform var(--t-book) var(--ease-out);
     box-shadow:
@@ -274,11 +276,12 @@
   .spine:focus-visible{outline:2px solid var(--gold-soft);outline-offset:4px}
   .spine:focus-visible,
   .spine:focus-visible .sheen{opacity:1}
-  .spine:focus-visible{transform:translateY(-14px) rotate(-1.6deg);z-index:3}
+  /* the pull: the book comes forward off the shelf, tips toward the reader, and lifts slightly */
+  .spine:focus-visible{transform:translate3d(0,-20px,90px) rotateY(-14deg) rotateX(5deg);z-index:3}
 
   @media (hover:hover){
     .spine:hover{
-      transform:translateY(-14px) rotate(-1.6deg);
+      transform:translate3d(0,-20px,90px) rotateY(-14deg) rotateX(5deg);
       z-index:3;
     }
     .spine:hover .sheen{opacity:1}
@@ -286,7 +289,7 @@
     .spine:hover + .spine{transform:translateX(3px)}
     .spine:has(+ .spine:hover){transform:translateX(-3px)}
   }
-  .spine:active{transition-duration:.15s;transform:translateY(-10px) rotate(-1deg) scale(.985)}
+  .spine:active{transition-duration:.15s;transform:translate3d(0,-16px,70px) rotateY(-12deg) rotateX(4deg)}
 
   .case-caption{
     text-align:center;
