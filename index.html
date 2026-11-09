@@ -246,6 +246,19 @@
   }
   .spine::before{top:26px} .spine::after{bottom:26px}
 
+  /* publisher mark: each site's own logo, low on the spine */
+  .spine:has(.spine-logo){padding-bottom:calc(26px + var(--logo) + 18px)}
+  .spine{--logo:clamp(30px,3vw,38px)}
+  .spine-logo{
+    position:absolute;z-index:1;left:50%;bottom:40px;
+    width:var(--logo);height:var(--logo);
+    transform:translateX(-50%);
+    display:grid;place-items:center;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.6));
+  }
+  .spine-logo svg{width:100%;height:100%;display:block;border-radius:22%;box-shadow:0 0 0 1px rgba(224,193,132,.55)}
+  .spine-logo svg[viewBox="0 0 40 44"]{border-radius:0;box-shadow:none}
+
   /* light + glow layer: fades in on hover instead of animating filters/shadows */
   .sheen{
     position:absolute;inset:0;
@@ -395,6 +408,9 @@
     .main-shelf .shelf-books{min-height:248px;gap:2px}
     .spine-text{font-size:12.5px;letter-spacing:.02em}
     .spine::before{top:20px} .spine::after{bottom:20px}
+    .spine{--logo:28px}
+    .spine-logo{bottom:32px}
+    .spine:has(.spine-logo){padding-bottom:calc(20px + var(--logo) + 16px)}
     h1 .amp{font-size:.34em}
   }
   @media (max-width:380px){
@@ -446,16 +462,19 @@
                 <a class="spine" style="--c:var(--c-acad);--i:0" href="https://ai-in-academic-libraries.vercel.app" target="_blank" rel="noopener">
                   <i class="sheen" aria-hidden="true"></i>
                   <span class="spine-text">AI for Academic Libraries</span>
+                  <span class="spine-logo" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="1" y="1" width="38" height="38" rx="9" fill="#0F6E56"/><text x="20" y="22" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="700" font-size="15" fill="#fff">AI</text><path d="M7.5 28.5c4.3-1 8.2-.5 12.5 2 4.3-2.5 8.2-3 12.5-2" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
                 </a>
 
                 <a class="spine" style="--c:var(--c-music);--i:1" href="https://ai-in-music-librarys.vercel.app" target="_blank" rel="noopener">
                   <i class="sheen" aria-hidden="true"></i>
                   <span class="spine-text">AI for Music Libraries</span>
+                  <span class="spine-logo" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#54265B"/><g fill="none" stroke-width="6" stroke-linecap="round"><path d="M14 52 A8 8 0 0 1 22 44" stroke="#9BD58B"/><path d="M14 52 A20 20 0 0 1 34 32" stroke="#8EC3F5"/><path d="M14 52 A32 32 0 0 1 46 20" stroke="#F4A58F"/></g></svg></span>
                 </a>
 
                 <a class="spine" style="--c:var(--c-pd);--i:2" href="https://ai-in-academic-libraries.vercel.app/professional-development.html" target="_blank" rel="noopener">
                   <i class="sheen" aria-hidden="true"></i>
                   <span class="spine-text">Professional Development</span>
+                  <span class="spine-logo" aria-hidden="true"><svg viewBox="0 0 40 44"><path d="M1 1h38v30L20 43 1 31z" fill="#fff"/><text x="20" y="24" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="14" fill="#0b2545">PD</text></svg></span>
                 </a>
 
                 <a class="spine" style="--c:var(--c-agentic);--i:3" href="https://ai-in-humanities.vercel.app" target="_blank" rel="noopener">
