@@ -823,21 +823,20 @@
   }
 
   /* ---------- the row ---------- */
+  // the three volumes stand together in the middle; plain books act as bookends
   const FILL = [
+    { stack: [{ color: '#2d3f52', th: 3.6, h: 25, d: 18, style: 'gold' }, { color: '#cdb892', th: 2.8, h: 21, d: 16, style: 'dark' }] },
     { color: '#6e3428', th: 2.6, h: 23.5, d: 16, style: 'paper' },
     { color: '#3a3d36', th: 3.4, h: 25.5, d: 17, style: 'gold' },
     { color: '#b89a6a', th: 2.3, h: 24.5, d: 16, style: 'paper', m: 1 },
-    'V0',
+    'V0', 'V1', 'V2',
     { color: '#e3d7bf', th: 3.0, h: 25.2, d: 17, style: 'dark' },
     { color: '#c7ad82', th: 2.4, h: 22.5, d: 15, style: 'paper' },
-    'V1',
     { color: '#7b3340', th: 2.1, h: 24,   d: 16, style: 'gold' },
     { color: '#ece2cd', th: 3.2, h: 26,   d: 18, style: 'dark' },
     { color: '#2f4438', th: 2.8, h: 23,   d: 16, style: 'gold' },
-    'V2',
     { color: '#5c6a52', th: 2.6, h: 24.5, d: 17, style: 'paper', m: 1 },
-    { color: '#8a3b2c', th: 3.0, h: 24,   d: 16, style: 'gold', lean: .12 },
-    { stack: [{ color: '#2d3f52', th: 3.6, h: 25, d: 18, style: 'gold' }, { color: '#cdb892', th: 2.8, h: 21, d: 16, style: 'dark' }] }
+    { color: '#8a3b2c', th: 3.0, h: 24,   d: 16, style: 'gold', lean: .12 }
   ];
   const GAP = .22;
   const items = [];
@@ -869,8 +868,6 @@
           y += s.th; w = Math.max(w, s.h);
           g.add(b.outer);
         });
-        // re-centre the stack
-        g.children.forEach(ch => ch.position.x -= w / 2);
         items.push({ kind: 'stack', obj: g, w: w + 2.5 });
       } else {
         const b = makeBook({ ...f, seed: seed++ });
@@ -899,26 +896,32 @@
   const cam = { x: 0, y: 0, z: 0, ly: 0 };
   const par = { x: 0, y: 0, tx: 0, ty: 0 };
 
-  function footprint(it){
-    if (it.kind === 'vol') return it.idx === turned ? it.b.d + 2.6 : it.w;
-    return it.w;
+  // positions for a given turned volume; the volume group is always centred in the frame
+  function place(tIdx){
+    const vis = items.filter(it => !mobile || it.m);
+    const out = [];
+    let x = 0, prev = null;
+    for (const it of vis){
+      if (prev && (prev.kind === 'vol') !== (it.kind === 'vol')) x += .9;   // a little air around the three
+      const w = (it.kind === 'vol' && it.idx === tIdx) ? it.b.d + 2.6 : it.w;
+      out.push([it, it.lean ? x + w : x + w / 2, w]);
+      x += w + GAP; prev = it;
+    }
+    const vs = out.filter(o => o[0].kind === 'vol');
+    const c = (vs[0][1] - vs[0][2] / 2 + vs[vs.length - 1][1] + vs[vs.length - 1][2] / 2) / 2;
+    let ext = 0;
+    for (const o of out){
+      o[1] -= c;
+      const l = o[0].lean ? o[1] - o[2] : o[1] - o[2] / 2, r = o[0].lean ? o[1] : o[1] + o[2] / 2;
+      ext = Math.max(ext, -l, r);
+    }
+    return { out, ext };
   }
   function layout(){
-    const vis = items.filter(it => !mobile || it.m);
     items.forEach(it => { it.o.visible = !mobile || !!it.m; });
-    const total = vis.reduce((s, it) => s + footprint(it), 0) + GAP * (vis.length - 1);
-    let x = -total / 2;
-    for (const it of vis){
-      const w = footprint(it);
-      it.tx = it.lean ? x + w : x + w / 2;
-      if (it.kind === 'vol') it.tx += 0;
-      x += w + GAP;
-    }
+    place(turned).out.forEach(([it, tx]) => { it.tx = tx; });
   }
-  function baseWidth(){
-    const vis = items.filter(it => !mobile || it.m);
-    return vis.reduce((s, it) => s + it.w, 0) + GAP * (vis.length - 1);
-  }
+  function baseWidth(){ return place(-1).ext * 2; }
 
   function resize(){
     const w = hero.clientWidth, h = hero.clientHeight;
@@ -927,7 +930,7 @@
     const nowMobile = w / h < .9 || w < 640;
     if (nowMobile !== mobile){ mobile = nowMobile; layout(); }
     const vt = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), ht = vt * camera.aspect;
-    const rowW = baseWidth() + (mobile ? 4 : 40) + (mobile ? 15 : 0);  // leave room for a turned cover on phones
+    const rowW = baseWidth() + (mobile ? 4 : 24) + (mobile ? 15 : 0);  // leave room for a turned cover on phones
     const bookFrac = mobile ? .3 : .36;                                     // book height as a share of the frame
     const dist = Math.max((rowW / 2) / ht, 27.6 / (bookFrac * 2 * vt));
     const H = 2 * dist * vt;
