@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI Shelf — open resources for AI in libraries and education</title>
-<meta name="description" content="AI Shelf is a small collection of open resources on artificial intelligence for academic libraries, music librarianship, and professional development.">
+<meta name="description" content="AI Shelf is a small collection of open resources on artificial intelligence for academic libraries, music librarianship, professional development, and research.">
 <meta property="og:title" content="AI Shelf">
 <meta property="og:description" content="A small collection of open resources on AI for academic libraries, music librarianship, and research practice.">
 <meta property="og:type" content="website">
@@ -34,6 +34,7 @@
     --c-acad:#0f6e56;    /* AI for Academic Libraries  */
     --c-music:#54265b;   /* AI for Music Libraries     */
     --c-pd:#854f0b;      /* Professional Development   */
+    --c-res:#1d3a52;     /* AI in Research             */
     --serif:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
     --sans:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --ease-out:cubic-bezier(.22,1,.36,1);
@@ -209,6 +210,7 @@
   .sec-head p{color:var(--ink-soft);margin:12px auto 0;max-width:52ch;font-size:15.5px}
 
   .cards{display:grid;gap:clamp(16px,2.2vw,22px);grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+  @media (min-width:700px){.cards{grid-template-columns:repeat(2,1fr)}}
   .card{
     position:relative;display:flex;flex-direction:column;padding:26px 26px 24px;border-radius:6px;text-decoration:none;
     background:var(--paper-2);border:1px solid var(--line);
@@ -284,20 +286,22 @@
   <div class="hero-copy">
     <span class="pill hero-in" style="--i:0">Open resources · Free to use</span>
     <h1 id="title" class="hero-in" style="--i:1">AI Shelf</h1>
-    <p class="lede hero-in" style="--i:2">A small, deliberate collection on artificial intelligence for academic libraries, music librarianship, and professional development.</p>
-    <p class="now hero-in" style="--i:3" id="now" aria-live="polite"><span>Three guides, one shelf</span></p>
+    <p class="lede hero-in" style="--i:2">A small, deliberate collection on artificial intelligence for academic libraries, music librarianship, professional development, and research.</p>
+    <p class="now hero-in" style="--i:3" id="now" aria-live="polite"><span>Four guides, one shelf</span></p>
   </div>
 
   <nav class="vol-keys" aria-label="Volumes on the shelf">
     <button type="button" data-v="0">Open Volume I: AI for Academic Libraries</button>
     <button type="button" data-v="1">Open Volume II: AI for Music Libraries</button>
     <button type="button" data-v="2">Open Volume III: Professional Development</button>
+    <button type="button" data-v="3">Open Volume IV: AI in Research</button>
   </nav>
 
   <div class="fallback">
     <a style="--c:var(--c-acad)" href="https://ai-in-academic-libraries.vercel.app" target="_blank" rel="noopener"><span>AI for Academic Libraries</span></a>
     <a style="--c:var(--c-music)" href="https://ai-in-music-librarys.vercel.app" target="_blank" rel="noopener"><span>AI for Music Libraries</span></a>
     <a style="--c:var(--c-pd)" href="https://ai-in-academic-libraries.vercel.app/professional-development.html" target="_blank" rel="noopener"><span>Professional Development</span></a>
+    <a style="--c:var(--c-res)" href="https://researchai-gamma.vercel.app" target="_blank" rel="noopener"><span>AI in Research</span></a>
   </div>
 
   <p class="hint"><span class="mouse">Hover to turn a volume, click to open it.</span><span class="touch">Tap a volume to turn it, tap again to open.</span></p>
@@ -308,7 +312,7 @@
   <section class="collection wrap" aria-labelledby="coll-h">
     <div class="sec-head">
       <h2 id="coll-h">What&rsquo;s on the shelf</h2>
-      <p>Three independent, freely available projects. No accounts, no paywalls, no tracking &mdash; open a link and start reading.</p>
+      <p>Four independent, freely available projects. No accounts, no paywalls, no tracking &mdash; open a link and start reading.</p>
     </div>
 
     <div class="cards">
@@ -337,6 +341,14 @@
         <div class="go">Browse the directory <span aria-hidden="true">&rarr;</span></div>
       </a>
 
+      <a class="card reveal" style="--c:var(--c-res);--i:3" href="https://researchai-gamma.vercel.app" target="_blank" rel="noopener">
+        <div class="card-head"><span class="mark" aria-hidden="true"></span><span class="card-eyebrow">Volume IV &middot; Reading portal</span></div>
+        <h3>AI in Research</h3>
+        <p>A reading portal on how AI is changing scientific and humanities research, read like a book: what changed from 2024 to 2026, a map of each research lifecycle, the library&rsquo;s part at every step, and a library of summarized sources.</p>
+        <div class="tags"><span class="tag">4 chapters</span><span class="tag">Science &amp; humanities</span><span class="tag">Summarized sources</span></div>
+        <div class="go">Start reading <span aria-hidden="true">&rarr;</span></div>
+      </a>
+
     </div>
   </section>
 
@@ -351,7 +363,7 @@
 <footer>
   <div class="wrap">
     AI Shelf <span class="dot">&middot;</span> Open educational resources <span class="dot">&middot;</span> <span id="yr">2026</span>
-    <p class="license">&copy; Yulia Brusova. All three volumes are licensed <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a> &mdash; share and adapt them for non-commercial use, with credit, under the same license.</p>
+    <p class="license">&copy; Yulia Brusova. All four volumes are licensed <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a> &mdash; share and adapt them for non-commercial use, with credit, under the same license.</p>
   </div>
 </footer>
 
@@ -360,7 +372,7 @@
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
 
-  /* ---------- the three volumes (shared with the 3D scene) ---------- */
+  /* ---------- the volumes (shared with the 3D scene) ---------- */
   window.VOLS = [
     {n:'I', kind:'Curriculum', title:'AI for Academic Libraries', c:'#0f6e56', href:'https://ai-in-academic-libraries.vercel.app',
      desc:'An eighteen-module curriculum for academic library workers, mapped to the ACRL AI Competencies and aligned with ALA guidance. Three levels, from conceptual foundations through applied workflows to automation and agentic AI.',
@@ -373,7 +385,11 @@
     {n:'III', kind:'Directory', title:'Professional Development', c:'#854f0b', href:'https://ai-in-academic-libraries.vercel.app/professional-development.html',
      desc:'A working directory of conferences, institutes, and calls for proposals on AI in libraries, sortable, with upcoming and past events separated automatically so you always see what is still open.',
      stats:[['CFPs','& conferences'],['Upcoming','first'],['Updated','regularly']], cta:'Browse the directory',
-     logo:'<svg viewBox="0 0 40 44"><path d="M1 1h38v30L20 43 1 31z" fill="#fff"/><text x="20" y="24" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="14" fill="#0b2545">PD</text></svg>'}
+     logo:'<svg viewBox="0 0 40 44"><path d="M1 1h38v30L20 43 1 31z" fill="#fff"/><text x="20" y="24" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="14" fill="#0b2545">PD</text></svg>'},
+    {n:'IV', kind:'Reading portal', title:'AI in Research', c:'#1d3a52', href:'https://researchai-gamma.vercel.app',
+     desc:'A reading portal on how AI is changing scientific and humanities research, read like a book: what changed from 2024 to 2026, a map of each research lifecycle, the library\u2019s part at every step, and a library of summarized sources.',
+     stats:[['4','chapters'],['2','research maps'],['Sources','summarized']], cta:'Start reading',
+     logo:'<svg viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#0b111b"/><g fill="none" stroke-width="3.2"><ellipse cx="32" cy="32" rx="24" ry="10" transform="rotate(-24 32 32)" stroke="#5fd4e6"/><ellipse cx="32" cy="32" rx="24" ry="10" transform="rotate(24 32 32)" stroke="#e2b85c"/></g><circle cx="32" cy="32" r="5.5" fill="#e2b85c"/></svg>'}
   ];
 
   /* ---------- open book overlay ---------- */
@@ -871,7 +887,7 @@
     { color: '#6e3428', th: 2.6, h: 23.5, d: 16, style: 'paper' },
     { color: '#3a3d36', th: 3.4, h: 25.5, d: 17, style: 'gold' },
     { color: '#b89a6a', th: 2.3, h: 24.5, d: 16, style: 'paper', m: 1 },
-    'V0', 'V1', 'V2',
+    'V0', 'V1', 'V2', 'V3',
     { color: '#e3d7bf', th: 3.0, h: 25.2, d: 17, style: 'dark' },
     { color: '#c7ad82', th: 2.4, h: 22.5, d: 15, style: 'paper' },
     { color: '#7b3340', th: 2.1, h: 24,   d: 16, style: 'gold' },
@@ -1018,7 +1034,7 @@
     if (i === turned) return;
     turned = i;
     layout();
-    setNow(i < 0 ? 'Three guides, one shelf' : `Volume ${VOLS[i].n} · ${VOLS[i].title}`);
+    setNow(i < 0 ? 'Four guides, one shelf' : `Volume ${VOLS[i].n} · ${VOLS[i].title}`);
   }
   window.shelf = { turn: setTurned };
 
