@@ -725,20 +725,8 @@
         x.drawImage(o.logo, (W - s) / 2, 1330 - hh / 2, s, hh);
         mx.fillStyle = ORM_GLOSS; mx.fillRect((W - s) / 2, 1330 - hh / 2, s, hh);
       }
-    } else if (o.style === 'paper'){
-      // pasted paper label with a few lines of type
-      x.fillStyle = '#efe4cc'; x.fillRect(W * .16, H * .14, W * .68, H * .17);
-      mx.fillStyle = 'rgb(0,225,0)'; mx.fillRect(W * .16, H * .14, W * .68, H * .17);
-      x.strokeStyle = 'rgba(80,60,40,.35)'; x.lineWidth = 2; x.strokeRect(W * .2, H * .15, W * .6, H * .15);
-      x.fillStyle = 'rgba(55,40,28,.75)';
-      for (let i = 0; i < 3; i++) x.fillRect(W * .3, H * (.19 + i * .03), W * .4 * (i === 1 ? .7 : 1), 9);
-      band(H - 120, 'rgba(30,20,10,.35)', ORM_CLOTH);
-    } else {
-      const col = o.style === 'dark' ? 'rgba(40,28,18,.7)' : GOLD;
-      const orm = o.style === 'dark' ? ORM_CLOTH : ORM_GOLD;
-      band(80, col, orm); band(H - 110, col, orm);
-      both(k => { for (let i = 0; i < 5; i++) k.fillRect(W / 2 - 6, 420 + i * 110, 12, 70 - (i % 2) * 22); }, orm, col);
     }
+    // plain books: bare cloth, no markings
     const t1 = tex(c), t2 = tex(m, { srgb: false });
     return [t1, t2];
   }
