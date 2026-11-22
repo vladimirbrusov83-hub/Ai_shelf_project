@@ -561,17 +561,71 @@
     for (let i = 0; i < 512; i++){ x.fillStyle = `rgba(110,85,50,${r() * .16})`; x.fillRect(i, 0, 1, 8); }
     return c;
   }
-  // window light: frame, mullions and leaves, projected by the sun lamp
-  const LEAVES = (() => {
-    const r = rng(77), out = [];
-    // a plant just outside the right-hand side of the window and a few twigs up top
-    for (let i = 0; i < 46; i++){
-      const t = r();
-      out.push({ x: 860 + r() * 200 - t * 160, y: 960 - t * 600 + r() * 60, rx: 18 + r() * 26, ry: 6 + r() * 10, a: r() * Math.PI, ph: r() * 6.28 });
+  // window light: frame and mullions, plus a tree outside the window, projected by the sun lamp
+  // near layer: a real branch (limbs -> twigs -> pointed leaves) that sways from its base
+  const TREE = (() => {
+    const r = rng(77);
+    function branch(len, w, depth){
+      const b = { len, w, bend: (r() - .5) * .5, kids: [], leaves: [], ph: r() * 6.28 };
+      if (depth < 4){
+        const n = depth === 0 ? 3 : 2 + (r() < .4 ? 1 : 0);
+        for (let i = 0; i < n; i++)
+          b.kids.push({ at: .3 + r() * .65, rel: (i % 2 ? 1 : -1) * (.3 + r() * .55), b: branch(len * (.6 + r() * .2), w * .6, depth + 1) });
+      }
+      if (depth >= 2){
+        const n = 6 + (r() * 7 | 0);
+        for (let i = 0; i < n; i++)
+          b.leaves.push({ at: .12 + r() * .88, rel: (i % 2 ? 1 : -1) * (.45 + r() * .75), s: 13 + r() * 11, ph: r() * 6.28 });
+        b.leaves.push({ at: 1, rel: (r() - .5) * .4, s: 15 + r() * 8, ph: r() * 6.28 });
+      }
+      return b;
     }
-    for (let i = 0; i < 18; i++) out.push({ x: 120 + r() * 360, y: 70 + r() * 110, rx: 16 + r() * 18, ry: 5 + r() * 8, a: r() * Math.PI, ph: r() * 6.28 });
-    return out;
+    return [
+      { x: 548, y: 360, a: Math.PI + .38, b: branch(150, 13, 0) },
+      { x: 430, y: -30, a: Math.PI * .66, b: branch(115, 9, 1) },
+    ];
   })();
+  // far layer: a dense canopy in the top-right corner; its gaps make the bright sun-flecks
+  const farC = (() => {
+    const r = rng(91), [tc, tx] = canvas2d(512, 512), [fc, fx] = canvas2d(512, 512);
+    tx.fillStyle = tx.strokeStyle = '#000'; tx.lineCap = 'round';
+    tx.lineWidth = 10; tx.beginPath(); tx.moveTo(530, 230); tx.quadraticCurveTo(450, 120, 330, -20); tx.stroke();
+    tx.lineWidth = 6; tx.beginPath(); tx.moveTo(470, 150); tx.quadraticCurveTo(420, 90, 440, -20); tx.stroke();
+    for (let c = 0; c < 16; c++){
+      const u = r(), cx = 520 - u * 210 + (r() - .5) * 60, cy = -10 + (1 - u) * 260 * r() + r() * 40;
+      for (let i = 0; i < 26; i++){
+        const ang = r() * 6.28, d = Math.sqrt(r()) * 38;
+        leafPath(tx, cx + Math.cos(ang) * d, cy + Math.sin(ang) * d, r() * 6.28, 16 + r() * 12);
+        tx.fill();
+      }
+    }
+    fx.filter = 'blur(7px)'; fx.drawImage(tc, 0, 0); fx.filter = 'none';
+    return fc;
+  })();
+  function leafPath(k, x, y, a, s){
+    const dx = Math.cos(a), dy = Math.sin(a), px = -dy, py = dx;
+    const tx = x + dx * s, ty = y + dy * s, w = s * .36;
+    k.beginPath(); k.moveTo(x, y);
+    k.quadraticCurveTo(x + dx * s * .45 + px * w, y + dy * s * .45 + py * w, tx, ty);
+    k.quadraticCurveTo(x + dx * s * .45 - px * w, y + dy * s * .45 - py * w, x, y);
+  }
+  const [nearC, nearX] = canvas2d(512, 512);
+  function drawBranch(k, x, y, a, b, depth, t){
+    if (!reduce) a += (Math.sin(t * .8 + b.ph) * .03 + Math.sin(t * 2.1 + b.ph * 1.7) * .01) * (depth + 1);
+    const ex = x + Math.cos(a) * b.len, ey = y + Math.sin(a) * b.len;
+    const mx = (x + ex) / 2 - Math.sin(a) * b.len * b.bend * .3, my = (y + ey) / 2 + Math.cos(a) * b.len * b.bend * .3;
+    k.lineWidth = b.w; k.beginPath(); k.moveTo(x, y); k.quadraticCurveTo(mx, my, ex, ey); k.stroke();
+    const at = f => { const u = 1 - f; return [u * u * x + 2 * u * f * mx + f * f * ex, u * u * y + 2 * u * f * my + f * f * ey]; };
+    for (const kid of b.kids){ const [px, py] = at(kid.at); drawBranch(k, px, py, a + kid.rel, kid.b, depth + 1, t); }
+    k.lineWidth = 1.2;
+    for (const l of b.leaves){
+      const [px, py] = at(l.at);
+      const la = a + l.rel + (reduce ? 0 : Math.sin(t * 3.1 + l.ph) * .12);
+      const bx = px + Math.cos(la) * 4, by = py + Math.sin(la) * 4;
+      k.beginPath(); k.moveTo(px, py); k.lineTo(bx, by); k.stroke();
+      leafPath(k, bx, by, la, l.s); k.fill();
+    }
+  }
   const [cookieC, cookieX] = canvas2d(512, 512);
   const [paneC, paneX] = canvas2d(512, 512);
   (function drawPanes(){
@@ -587,19 +641,19 @@
     x.filter = 'none';
   })();
   function drawCookie(t){
-    const x = cookieX;
-    x.globalCompositeOperation = 'source-over';
+    const x = cookieX, k = nearX;
+    k.clearRect(0, 0, 512, 512);
+    k.fillStyle = k.strokeStyle = '#000'; k.lineCap = 'round';
+    for (const root of TREE) drawBranch(k, root.x, root.y, root.a, root.b, 0, t);
+    x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
     x.drawImage(paneC, 0, 0);
-    x.filter = 'blur(5px)';
-    x.fillStyle = 'rgba(0,0,0,.82)';
-    for (const l of LEAVES){
-      const sway = reduce ? 0 : Math.sin(t * .7 + l.ph) * .08 + Math.sin(t * 1.9 + l.ph * 2) * .025;
-      const dx = reduce ? 0 : Math.sin(t * .55 + l.ph) * 5;
-      x.beginPath();
-      x.ellipse((l.x + dx) * .5, l.y * .5, l.rx * .5, l.ry * .5, l.a + sway, 0, Math.PI * 2);
-      x.fill();
-    }
-    x.filter = 'none';
+    // far canopy: soft and lighter (skylight fills it), drifts slowly
+    x.globalAlpha = .62;
+    x.drawImage(farC, reduce ? 0 : Math.sin(t * .45) * 4, reduce ? 0 : Math.sin(t * .6 + 1) * 2);
+    // near branch: crisper and darker
+    x.globalAlpha = .8; x.filter = 'blur(2.5px)';
+    x.drawImage(nearC, 0, 0);
+    x.filter = 'none'; x.globalAlpha = 1;
   }
   drawCookie(0);
   const cookie = tex(cookieC);
