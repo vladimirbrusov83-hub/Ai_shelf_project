@@ -19,7 +19,16 @@
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
 } }
 </script>
-<script>document.documentElement.classList.add('js');</script>
+<script>
+  // evening view from 5 pm to 6 am, visitor's own clock; phones always stay in day mode
+  // ?time=night or ?time=day forces one (for testing)
+  (function(){
+    var d = document.documentElement, q = new URLSearchParams(location.search).get('time'), h = new Date().getHours();
+    var phone = Math.min(screen.width, screen.height) < 600;
+    d.classList.add('js');
+    if (q ? q === 'night' : (!phone && (h >= 17 || h < 6))) d.classList.add('night');
+  })();
+</script>
 <style>
   :root{
     --paper:#f3ebdc;
@@ -153,6 +162,37 @@
   }
   .fallback a span{writing-mode:vertical-rl;transform:rotate(180deg);font:600 17px var(--serif);letter-spacing:.03em}
 
+  /* ---------- evening: dark room, moon through the window, lamp + fireplace ---------- */
+  .hero h1,.hero .lede,.hero .now,.hero .pill{transition:color 2s var(--ease-soft),background-color 2s,border-color 2s,text-shadow 2s}
+  .night .hero{background:linear-gradient(180deg,#1d1914 0%,#16120e 70%,#2b1c12 70.2%,#1a120b 100%)}
+  .night .hero::after{background:radial-gradient(120% 90% at 55% 45%, transparent 45%, rgba(8,5,2,.55) 100%)}
+  .night .hero h1{color:#f1e5cc;text-shadow:0 2px 22px rgba(0,0,0,.55)}
+  .night .hero .lede,.night .hero .now{color:#d6c4a0;text-shadow:0 1px 3px rgba(18,10,4,.7),0 0 18px rgba(18,10,4,.75)}
+  .night .hero .pill{background:rgba(26,19,12,.5);border-color:rgba(255,226,180,.16);color:#d9c8a6}
+  .fireglow{
+    position:absolute;inset:0;pointer-events:none;opacity:0;
+    background:radial-gradient(55% 75% at -8% 88%, rgba(255,118,36,.42), rgba(255,90,20,.12) 45%, transparent 72%);
+    mix-blend-mode:screen;
+  }
+  .lights{
+    position:absolute;z-index:4;left:0;right:0;bottom:calc(clamp(18px,5vh,54px) + 36px);
+    display:none;justify-content:center;gap:10px;padding:0 16px;
+  }
+  .night .lights{display:flex;animation:fade 1.2s var(--ease-soft) .6s backwards}
+  .night .vol-keys{bottom:calc(clamp(18px,5vh,54px) + 96px)}
+  .lights button{
+    min-height:44px;display:inline-flex;align-items:center;gap:9px;padding:0 18px 0 14px;cursor:pointer;
+    font:500 13.5px var(--sans);letter-spacing:.03em;color:#efe1c4;
+    background:rgba(24,17,10,.55);border:1px solid rgba(255,220,170,.2);border-radius:99px;
+    backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+    transition:background-color var(--t-fast),border-color var(--t-fast);
+  }
+  .lights button:hover{background:rgba(40,28,16,.7);border-color:rgba(255,220,170,.38)}
+  .lights button:focus-visible{outline:2px solid var(--gold-soft);outline-offset:3px}
+  .lights i{width:8px;height:8px;border-radius:50%;background:#5b4b39;transition:background-color .3s,box-shadow .3s}
+  .lights button[aria-pressed="true"] i{background:#ffc46e;box-shadow:0 0 10px 3px rgba(255,170,80,.65)}
+  .lights #b-fire[aria-pressed="true"] i{background:#ff8a3a;box-shadow:0 0 10px 3px rgba(255,110,40,.65)}
+
   /* ---------- open book ---------- */
   .veil{
     position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:20px;
@@ -281,6 +321,7 @@
 <!-- ================= HERO: the room ================= -->
 <section class="hero" id="hero" aria-labelledby="title">
   <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="fireglow" id="fireglow" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
   <div class="hero-copy">
@@ -296,6 +337,11 @@
     <button type="button" data-v="2">Open Volume III: Professional Development</button>
     <button type="button" data-v="3">Open Volume IV: AI in Research</button>
   </nav>
+
+  <div class="lights" role="group" aria-label="Evening lights">
+    <button type="button" id="b-lamp" aria-pressed="false"><i aria-hidden="true"></i>Lamp</button>
+    <button type="button" id="b-fire" aria-pressed="false"><i aria-hidden="true"></i>Fireplace</button>
+  </div>
 
   <div class="fallback">
     <a style="--c:var(--c-acad)" href="https://ai-in-academic-libraries.vercel.app" target="_blank" rel="noopener"><span>AI for Academic Libraries</span></a>
@@ -737,6 +783,84 @@
   scene.add(sun, sun.target);
   const SUN_MAX = 7;
 
+  /* ---------- evening: moonlight through the same window, a desk lamp, a fire off to the left ---------- */
+  const Q = new URLSearchParams(location.search);
+  const TIME_Q = Q.get('time');
+  const PHONE = Math.min(screen.width, screen.height) < 600;   // phones always stay in day mode
+  const nightNow = () => TIME_Q ? TIME_Q === 'night' : !PHONE && (h => h >= 17 || h < 6)(new Date().getHours());
+  let night = root.classList.contains('night');
+  const ev = { n: night ? 1 : 0, lamp: 0, fire: 0, lampOn: Q.has('lamp'), fireOn: Q.has('fire') };
+  const MOON = 1.8, LAMP_MAX = 7.5, GLOW_MAX = 2, FIRE_MAX = 1.7;
+  const C = c => new THREE.Color(c);
+  const SUN_DAY = C('#ffd296'), SUN_MOON = C('#a4b8e6');
+  const HEMI_DAY = C('#fff1dc'), HEMI_NIGHT = C('#3e4b68'), GROUND_DAY = C('#7a5434'), GROUND_NIGHT = C('#1c130c');
+  const MOTE_DAY = C('#fff0d0'), MOTE_LAMP = C('#ffcb8e');
+
+  const brass = new THREE.MeshStandardMaterial({ color: '#b98d4c', metalness: 1, roughness: .3 });
+  const shadeMat = new THREE.MeshStandardMaterial({ color: '#eadcbf', roughness: .92, side: THREE.DoubleSide, emissive: '#ffb25c', emissiveIntensity: 0 });
+  const bulbMat = new THREE.MeshStandardMaterial({ color: '#fff3d8', emissive: '#ffd28e', emissiveIntensity: 0, roughness: .4 });
+  const lamp = new THREE.Group();
+  const lp = (geo, mat, y, shadow = true) => {
+    const m = new THREE.Mesh(geo, mat); m.position.y = y; m.castShadow = shadow; m.receiveShadow = true;
+    m.userData.lamp = true; lamp.add(m); return m;
+  };
+  lp(new THREE.CylinderGeometry(5.2, 6.3, 1.6, 48), brass, .8);
+  lp(new THREE.CylinderGeometry(2.6, 4.4, 1.3, 48), brass, 2.25);
+  lp(new THREE.CylinderGeometry(.48, .48, 27, 16), brass, 16.4);
+  lp(new THREE.SphereGeometry(1.1, 20, 14), brass, 30);
+  lp(new THREE.SphereGeometry(1.7, 24, 16), bulbMat, 32.2, false);
+  lp(new THREE.CylinderGeometry(5.4, 9.8, 10.5, 56, 1, true), shadeMat, 34.4);
+  lp(new THREE.TorusGeometry(9.8, .22, 8, 56).rotateX(Math.PI / 2), brass, 29.15, false);
+  lp(new THREE.TorusGeometry(5.4, .2, 8, 56).rotateX(Math.PI / 2), brass, 39.65, false);
+  // a little blob under the base
+  const lampBlob = new THREE.Mesh(new THREE.PlaneGeometry(17, 17), new THREE.MeshBasicMaterial({ map: blobTex, transparent: true, opacity: .5, depthWrite: false }));
+  lampBlob.rotation.x = -Math.PI / 2; lampBlob.position.y = .05; lamp.add(lampBlob);
+
+  // the bulb throws light down and out under the shade; the shade's own rim cuts it off on the wall
+  const lampLight = new THREE.SpotLight('#ffb468', 0, 190, 1.2, .8, 0);
+  lampLight.position.set(0, 32.2, 1.5);
+  lampLight.castShadow = true;
+  lampLight.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048);
+  lampLight.shadow.camera.near = 2; lampLight.shadow.camera.far = 260;
+  lampLight.shadow.bias = -.0004; lampLight.shadow.normalBias = .05;
+  lamp.add(lampLight); scene.add(lampLight.target);
+  // light escaping through the open top: a warm glow on the wall above
+  const lampGlow = new THREE.PointLight('#ffbf78', 0, 75, 0);
+  lampGlow.position.set(0, 38, 0); lamp.add(lampGlow);
+  lamp.visible = night;
+  scene.add(lamp);
+  // daytime skips the two extra shadow passes
+
+  // fireplace, off-frame to the left and low: long dancing shadows thrown right across the wall
+  const fire = new THREE.SpotLight('#ff7a30', 0, 0, .4, 1, 0);
+  fire.position.set(-135, 18, 190);
+  fire.target.position.set(-25, 2, WALL_Z);
+  fire.castShadow = true;
+  fire.shadow.mapSize.set(small ? 1024 : 2048, small ? 1024 : 2048);
+  fire.shadow.camera.near = 100; fire.shadow.camera.far = 520;
+  fire.shadow.bias = -.0004; fire.shadow.normalBias = .08; fire.shadow.radius = 3;
+  scene.add(fire, fire.target);
+  const fireGlow = document.getElementById('fireglow');
+  lampLight.castShadow = fire.castShadow = night;
+
+  function setNight(v){
+    if (v === night) return;
+    night = v;
+    root.classList.toggle('night', v);
+    if (v) lamp.visible = true;
+    lampLight.castShadow = fire.castShadow = v;
+    document.querySelector('meta[name="theme-color"]').content = v ? '#16120e' : '#e9dcc4';
+  }
+  if (night) document.querySelector('meta[name="theme-color"]').content = '#16120e';
+  if (!TIME_Q && !PHONE) setInterval(() => setNight(nightNow()), 60000);
+
+  const bLamp = document.getElementById('b-lamp'), bFire = document.getElementById('b-fire');
+  function toggleLamp(on = !ev.lampOn){ ev.lampOn = on; bLamp.setAttribute('aria-pressed', on); }
+  function toggleFire(on = !ev.fireOn){ ev.fireOn = on; bFire.setAttribute('aria-pressed', on); }
+  bLamp.addEventListener('click', () => toggleLamp());
+  bFire.addEventListener('click', () => toggleFire());
+  toggleLamp(ev.lampOn); toggleFire(ev.fireOn);
+
   /* ---------- books ---------- */
   const GOLD = '#d4b06a';
   const SERIF = '"Cormorant Garamond", Georgia, serif';
@@ -978,6 +1102,11 @@
   function layout(){
     items.forEach(it => { it.o.visible = !mobile || !!it.m; });
     place(turned).out.forEach(([it, tx]) => { it.tx = tx; });
+    // the lamp stands just past the right end of the row (measured with no volume turned, so it never moves)
+    let right = -1e9;
+    for (const [it, x, w] of place(-1).out) right = Math.max(right, it.lean ? x : x + w / 2);
+    lamp.position.set(right + (mobile ? 9 : 12), 0, 3);
+    lampLight.target.position.set(lamp.position.x - 50, 6, WALL_Z + 10);
   }
   function baseWidth(){ return place(-1).ext * 2; }
 
@@ -1021,8 +1150,10 @@
     ptr.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(ptr, camera);
     const targets = volItems.map(v => v.b.outer);
+    if (night) targets.push(lamp);
     const hits = ray.intersectObjects(targets, true);
-    return hits.length ? hits[0].object.userData.vol : -1;
+    if (!hits.length) return -1;
+    return hits[0].object.userData.lamp ? -2 : hits[0].object.userData.vol;
   }
   let nowTimer;
   function setNow(text){
@@ -1046,13 +1177,14 @@
     if (e.pointerType !== 'mouse') return;
     const i = hit(e);
     hovered = i;
-    hero.style.cursor = i >= 0 ? 'pointer' : '';
+    hero.style.cursor = i !== -1 ? 'pointer' : '';
     if (i >= 0) setTurned(i);
   });
   hero.addEventListener('pointerleave', () => { par.tx = par.ty = 0; hovered = -1; if (finePointer) setTurned(-1); });
   hero.addEventListener('click', e => {
     if (e.target.closest('button, a')) return;
     const i = hit(e);
+    if (i === -2){ toggleLamp(); return; }
     if (i < 0){ if (!finePointer) setTurned(-1); return; }
     if (finePointer || turned === i) openVolume(i);
     else setTurned(i);
@@ -1071,8 +1203,30 @@
 
     // sun comes up first, then the books slide together
     const sunIn = reduce ? 1 : ease(t / 1.6);
-    sun.intensity = SUN_MAX * (.25 + .75 * sunIn);
-    hemi.intensity = .16 + .08 * sunIn;
+    // day <-> evening blend (a slow dusk if the clock passes 5 pm with the page open)
+    ev.n = reduce ? +night : damp(ev.n, +night, 1.2, dt);
+    ev.lamp = reduce ? +(ev.lampOn && night) : damp(ev.lamp, +(ev.lampOn && night), 11, dt);
+    ev.fire = reduce ? +(ev.fireOn && night) : damp(ev.fire, +(ev.fireOn && night), 1.1, dt);
+    const n = ev.n, d = 1 - n;
+    if (!night && n < .01) lamp.visible = false;
+    sun.color.copy(SUN_DAY).lerp(SUN_MOON, n);
+    sun.intensity = SUN_MAX * (.25 + .75 * sunIn) * d + MOON * sunIn * n;
+    hemi.color.copy(HEMI_DAY).lerp(HEMI_NIGHT, n);
+    hemi.groundColor.copy(GROUND_DAY).lerp(GROUND_NIGHT, n);
+    hemi.intensity = (.16 + .08 * sunIn) * d + .05 * n;
+    fill.intensity = .18 * d + .025 * n;
+    scene.environmentIntensity = .16 * d + .025 * n;
+    // the lamp: a quick flick on, with a tiny settle
+    lampLight.intensity = LAMP_MAX * ev.lamp;
+    lampGlow.intensity = GLOW_MAX * ev.lamp;
+    shadeMat.emissiveIntensity = .75 * ev.lamp;
+    bulbMat.emissiveIntensity = 3.5 * ev.lamp;
+    // the fire catches slowly, then flickers; its shadows sway with it
+    const fl = reduce ? 1 : .8 + .1 * Math.sin(t * 7.3) + .07 * Math.sin(t * 12.9 + 1.3) + .05 * Math.sin(t * 23.1 + .4) + .03 * Math.sin(t * 37.7);
+    fire.intensity = FIRE_MAX * ev.fire * fl;
+    if (!reduce){ fire.position.y = 18 + Math.sin(t * 4.7) * 1.6 + Math.sin(t * 9.3) * .7; fire.position.x = -135 + Math.sin(t * 3.1) * 2.5; }
+    fireGlow.style.opacity = (ev.fire * (.55 + .45 * fl)).toFixed(3);
+    renderer.toneMappingExposure = .95 + .1 * n;
     // leaf shadows sway; redrawn every third frame to stay light on phones
     if (!reduce && (++cookieTick % 3 === 0)){ drawCookie(t); cookie.needsUpdate = true; }
 
@@ -1095,7 +1249,8 @@
 
     // dust drifts slowly through the light
     if (MOTES){
-      motes.material.opacity = .55 * sunIn;
+      motes.material.opacity = .55 * sunIn * d + .42 * ev.lamp * n;
+      motes.material.color.copy(MOTE_DAY).lerp(MOTE_LAMP, n);
       for (let i = 0; i < MOTES; i++){
         const [ph, sp] = moteSeed[i];
         motePos[i * 3] += Math.sin(t * .2 * sp + ph) * .012;
